@@ -1,27 +1,77 @@
 package com.example.leo_forum_project_test.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CreationTimestamp;
 
-@Data
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "comment")
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private long id;
+    private Long commentId;
 
-    @Column(name = "author_id")
-    private long authorId;
+    @NotBlank(message = "Комментарий не может быть пустым")
+    @Size(min = 1, max = 300, message = "Комментарий должен содержать от {min} до {max} символов")
+    @Column(name = "comment")
+    private String comment;
 
-    @Column(name = "message_id")
-    private long messageId;
+    @NotBlank(message = "Автор не может быть пустым")
+    @Size(min = 1, max = 50, message = "Имя автора должно содержать от {min} до {max} символов")
+    @Column(name = "author")
+    private String author;
 
-    @Column(name = "comment_text")
-    private String comment_text;
+    @CreationTimestamp
+    @Column(name = "date", nullable = false, updatable = false)
+    private LocalDateTime localDateTime;
 
-    @Column(name = "comment_date")
-    private int comment_date;
 
+    public Comment(String comment, String author, LocalDateTime localDateTime, Long commentId) {
+        this.comment = comment;
+        this.author = author;
+        this.localDateTime = localDateTime;
+        this.commentId = commentId;
+    }
+
+    public Comment() {
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public LocalDateTime getDate() {
+        return localDateTime;
+    }
+
+    public void setDate(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
+    public Long getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
+    }
 }
+
+
+

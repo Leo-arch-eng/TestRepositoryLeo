@@ -9,5 +9,4 @@ public class LeoForumProjectTestApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LeoForumProjectTestApplication.class, args);
 	}
-
 }
