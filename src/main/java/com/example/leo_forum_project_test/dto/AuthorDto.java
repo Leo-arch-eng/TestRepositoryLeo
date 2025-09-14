@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthorDto {
 
-    private Long authorId;
+    private Long id;
 
     @NotBlank(message = "Имя автора не может быть пустым")
     @Size(min = 1, max = 50, message = "Имя автора должно содержать от {min} до {max} символов")

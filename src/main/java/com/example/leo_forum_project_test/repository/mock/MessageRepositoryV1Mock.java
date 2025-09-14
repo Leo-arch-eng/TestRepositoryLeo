@@ -1,6 +1,6 @@
 package com.example.leo_forum_project_test.repository.mock;
 
-import com.example.leo_forum_project_test.dto.Message;
+import com.example.leo_forum_project_test.entity.MessageE;
 import com.example.leo_forum_project_test.repository.MessageRepositoryV1;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 @Service
 public class MessageRepositoryV1Mock implements MessageRepositoryV1 {
 
-    private final Map<Long, Message> messageMap;
+    private final Map<Long, MessageE> messageMap;
     private static Long lastCreatedMessageId = 0L;
 
     MessageRepositoryV1Mock() {
@@ -20,32 +20,32 @@ public class MessageRepositoryV1Mock implements MessageRepositoryV1 {
 
 
     @Override
-    public Message createMessage(Message message) {
+    public MessageE createMessage(MessageE messageE) {
         Long newMessageId = lastCreatedMessageId++;
-        message.setMessageId(newMessageId);
-        messageMap.put(newMessageId, message);
+        messageE.setMessageId(newMessageId);
+        messageMap.put(newMessageId, messageE);
         System.out.println(
                 "Было создано новое сообщение от пользователя c :" +
                         "NAME" + "и c ID: " + newMessageId
         );
-        return message;
+        return messageE;
     }
 
     @Override
-    public Message readMessageById(Long messageId) {
+    public MessageE findMessageById(Long messageId) {
         ;
         System.out.println("Выбрано сообщение с ID: " + messageId);
         return messageMap.get(messageId);
     }
 
     @Override
-    public Message updateMessage(Long messageId, Message message
+    public MessageE updateMessage(Long messageId, MessageE messageE
     ) {
-        if (!messageMap.containsKey(messageId)) {
-            messageMap.put(messageId, message);
-            System.out.println("Сообщение с идентификатором: " + messageId + " был обновлено");
+        if (messageMap.containsKey(messageId)) {
+            messageMap.put(messageId, messageE);
+            System.out.println("Сообщение с идентификатором: " + messageId + " было обновлено");
         }
-        return message;
+        return messageE;
     }
 
     @Override

@@ -1,13 +1,14 @@
 package com.example.leo_forum_project_test.service;
 
-import com.example.leo_forum_project_test.dto.Message;
+import com.example.leo_forum_project_test.dto.MessageDto;
+import jakarta.validation.Valid;
 
 public interface MessageServiceV1 {
-    Message createMessage(Message message);
+    MessageDto createMessage(@Valid MessageDto messageDto);
 
-    Message readMessageById(Long messageId);
+    MessageDto findMessageById(Long messageId);
 
-    Message updateMessage(Long messageId, Message message);
+    MessageDto updateMessage(Long messageId,@Valid MessageDto messageDto);
 
     void deleteMessage(Long messageId);
 }

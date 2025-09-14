@@ -5,12 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-
+@Component
 @Entity
 @Table(name = "message")
-public class Message {
+public class MessageE {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +36,11 @@ public class Message {
     @Column(name = "localDate", updatable = false)
     private LocalDateTime localDateTime;
 
-    public Message(Long messageId,
-                   String authorName,
-                   String authorSurname,
-                   String message,
-                   LocalDateTime localDateTime
+    public MessageE(Long messageId,
+                    String authorName,
+                    String authorSurname,
+                    String message,
+                    LocalDateTime localDateTime
     ) {
         this.messageId = messageId;
         this.authorName = authorName;
@@ -48,7 +49,7 @@ public class Message {
         this.localDateTime = localDateTime;
     }
 
-    public Message() {
+    public MessageE() {
     }
 
     public Long getMessageId() {
@@ -83,11 +84,11 @@ public class Message {
         this.message = message;
     }
 
-    public LocalDateTime getLocalDate() {
+    public LocalDateTime getLocalDateTime() {
         return localDateTime;
     }
 
-    public void setLocalDate(LocalDateTime localDateTime) {
+    public void setLocalDateTime(LocalDateTime localDateTime) {
         this.localDateTime = localDateTime;
     }
 

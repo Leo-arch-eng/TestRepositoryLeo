@@ -1,6 +1,6 @@
 package com.example.leo_forum_project_test.repository.mock;
 
-import com.example.leo_forum_project_test.dto.Topic;
+import com.example.leo_forum_project_test.entity.TopicE;
 import com.example.leo_forum_project_test.repository.TopicRepositoryV1;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 @Service
 public class TopicRepositoryV1Mock implements TopicRepositoryV1 {
 
-    private final Map<Long, Topic> topicMap;
+    private final Map<Long, TopicE> topicMap;
     private static Long lastCreatedId = 0L;
 
     public TopicRepositoryV1Mock() {
@@ -18,18 +18,18 @@ public class TopicRepositoryV1Mock implements TopicRepositoryV1 {
     }
 
     @Override
-    public Topic create(Topic topic) {
+    public TopicE create(TopicE topicE) {
             Long newId = lastCreatedId++;
-            topic.setId(newId);
-            topicMap.put(newId,topic);
+            topicE.setId(newId);
+            topicMap.put(newId, topicE);
             System.out.println(
-                    "Добавлено топик с идентификатором: + " + lastCreatedId + " = " + topic
+                    "Добавлено топик с идентификатором: + " + lastCreatedId + " = " + topicE
             );
-            return topic;
+            return topicE;
     }
 
     @Override
-    public Topic findById(Long topicId) {
+    public TopicE findById(Long topicId) {
         return topicMap.get(topicId);
     }
 
@@ -43,11 +43,11 @@ public class TopicRepositoryV1Mock implements TopicRepositoryV1 {
     }
 
     @Override
-    public Topic update(Long topicId, Topic topic) {
+    public TopicE update(Long topicId, TopicE topicE) {
             if (topicMap.containsKey(topicId)) {
-                topicMap.put(topicId, topic);
+                topicMap.put(topicId, topicE);
                 System.out.println("Топик с идентификатором: " + topicId + " был обновлен");
             }
-        return topic;
+        return topicE;
     }
 }

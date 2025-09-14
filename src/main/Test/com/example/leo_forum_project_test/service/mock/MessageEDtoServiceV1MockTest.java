@@ -1,6 +1,6 @@
 package com.example.leo_forum_project_test.service.mock;
 
-import com.example.leo_forum_project_test.dto.Message;
+import com.example.leo_forum_project_test.entity.MessageE;
 import com.example.leo_forum_project_test.repository.MessageRepositoryV1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class MessageServiceV1MockTest {
+public class MessageEDtoServiceV1MockTest {
 
     @Mock
     private MessageRepositoryV1 messageRepositoryV1;
@@ -19,47 +19,46 @@ public class MessageServiceV1MockTest {
     @InjectMocks
     private MessageServiceV1Mock messageService;
 
-    private Message sampleMessage;
+    private MessageE sampleMessageE;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        sampleMessage = new Message();
-        sampleMessage.setMessageId(1L);
-        sampleMessage.setAuthorName("Иван");
-        sampleMessage.setAuthorSurname("Петров");
-        sampleMessage.setMessage("Это тестовое сообщение");
-        sampleMessage.setLocalDate(20250902L); // пример даты в формате ГГГГММДД
+        sampleMessageE = new MessageE();
+        sampleMessageE.setMessageId(1L);
+        sampleMessageE.setAuthorName("Иван");
+        sampleMessageE.setAuthorSurname("Петров");
+        sampleMessageE.setMessage("Это тестовое сообщение");
     }
 
     @Test
     public void testCreateMessageSuccess() {
-        when(messageRepositoryV1.createMessage(any(Message.class))).thenReturn(sampleMessage);
+        when(messageRepositoryV1.createMessage(any(MessageE.class))).thenReturn(sampleMessageE);
 
-        Message result = messageService.createMessage(sampleMessage);
+        MessageE result = messageService.createMessage(sampleMessageE);
 
         assertNotNull(result);
         assertEquals("Иван", result.getAuthorName());
-        verify(messageRepositoryV1).createMessage(any(Message.class));
+        verify(messageRepositoryV1).createMessage(any(MessageE.class));
     }
 
     @Test
     public void testCreateMessageException() {
-        when(messageRepositoryV1.createMessage(any(Message.class))).thenThrow(new RuntimeException("DB error"));
+        when(messageRepositoryV1.createMessage(any(MessageE.class))).thenThrow(new RuntimeException("DB error"));
 
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            messageService.createMessage(sampleMessage);
+            messageService.createMessage(sampleMessageE);
         });
 
         assertEquals("DB error", thrown.getMessage());
-        verify(messageRepositoryV1).createMessage(any(Message.class));
+        verify(messageRepositoryV1).createMessage(any(MessageE.class));
     }
 
     @Test
     public void testFindMessageByIdSuccess() {
-        when(messageRepositoryV1.findMessageById(anyLong())).thenReturn(sampleMessage);
+        when(messageRepositoryV1.findMessageById(anyLong())).thenReturn(sampleMessageE);
 
-        Message result = messageService.findMessageById(1L);
+        MessageE result = messageService.findMessageById(1L);
 
         assertNotNull(result);
         assertEquals("Иван", result.getAuthorName());
@@ -70,7 +69,7 @@ public class MessageServiceV1MockTest {
     public void testFindMessageByIdNotFound() {
         when(messageRepositoryV1.findMessageById(anyLong())).thenReturn(null);
 
-        Message result = messageService.findMessageById(999L);
+        MessageE result = messageService.findMessageById(999L);
 
         assertNull(result);
         verify(messageRepositoryV1).findMessageById(999L);
@@ -78,33 +77,32 @@ public class MessageServiceV1MockTest {
 
     @Test
     public void testUpdateMessageSuccess() {
-        Message updatedMessage = new Message();
-        updatedMessage.setMessageId(1L);
-        updatedMessage.setAuthorName("Петр");
-        updatedMessage.setAuthorSurname("Иванов");
-        updatedMessage.setMessage("Обновленное сообщение");
-        updatedMessage.setLocalDate(20250903L);
+        MessageE updatedMessageE = new MessageE();
+        updatedMessageE.setMessageId(1L);
+        updatedMessageE.setAuthorName("Петр");
+        updatedMessageE.setAuthorSurname("Иванов");
+        updatedMessageE.setMessage("Обновленное сообщение");
 
-        when(messageRepositoryV1.updateMessage(eq(1L), any(Message.class))).thenReturn(updatedMessage);
+        when(messageRepositoryV1.updateMessage(eq(1L), any(MessageE.class))).thenReturn(updatedMessageE);
 
-        Message result = messageService.updateMessage(1L, updatedMessage);
+        MessageE result = messageService.updateMessage(1L, updatedMessageE);
 
         assertNotNull(result);
         assertEquals("Петр", result.getAuthorName());
-        verify(messageRepositoryV1).updateMessage(eq(1L), any(Message.class));
+        verify(messageRepositoryV1).updateMessage(eq(1L), any(MessageE.class));
     }
 
     @Test
     public void testUpdateMessageException() {
-        when(messageRepositoryV1.updateMessage(eq(1L), any(Message.class)))
+        when(messageRepositoryV1.updateMessage(eq(1L), any(MessageE.class)))
                 .thenThrow(new RuntimeException("DB error"));
 
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            messageService.updateMessage(1L, sampleMessage);
+            messageService.updateMessage(1L, sampleMessageE);
         });
 
         assertEquals("DB error", thrown.getMessage());
-        verify(messageRepositoryV1).updateMessage(eq(1L), any(Message.class));
+        verify(messageRepositoryV1).updateMessage(eq(1L), any(MessageE.class));
     }
 
     @Test

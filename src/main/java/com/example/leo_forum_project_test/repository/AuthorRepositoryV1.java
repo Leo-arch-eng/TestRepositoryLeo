@@ -1,13 +1,12 @@
 package com.example.leo_forum_project_test.repository;
 
-import com.example.leo_forum_project_test.dto.Author;
+import com.example.leo_forum_project_test.entity.AuthorE;
 
 public interface AuthorRepositoryV1 {
-    Author createAuthor(Author author);
+    AuthorE createAuthor(AuthorE authorE);
 
-    Author updateAuthor(Long authorId,Author author);
-            ;
+    AuthorE updateAuthor(Long authorId, AuthorE authorE);
     void deleteAuthor(Long authorId);
 
-    Author findAuthorById(Long authorId);
+    AuthorE findAuthorById(Long authorId);
 }

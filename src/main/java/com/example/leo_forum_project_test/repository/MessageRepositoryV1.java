@@ -1,13 +1,13 @@
 package com.example.leo_forum_project_test.repository;
 
-import com.example.leo_forum_project_test.dto.Message;
+import com.example.leo_forum_project_test.entity.MessageE;
 
 public interface MessageRepositoryV1 {
-    Message createMessage(Message message);
+    MessageE createMessage(MessageE messageE);
 
-    Message readMessageById(Long messageId);
+    MessageE findMessageById(Long messageId);
 
-    Message updateMessage(Long messageId, Message message);
+    MessageE updateMessage(Long messageId, MessageE messageE);
 
     void deleteMessage(Long messageId);
 }

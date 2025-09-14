@@ -1,12 +1,10 @@
 package com.example.leo_forum_project_test.controller;
 
-
-import com.example.leo_forum_project_test.dto.Author;
+import com.example.leo_forum_project_test.dto.AuthorDto;
 import com.example.leo_forum_project_test.service.AuthorServiceV1;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,49 +13,45 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/topic/author")
 public class AuthorControllerV1 {
 
-    @Autowired
-    private AuthorServiceV1 authorServiceV1;
+    private final AuthorServiceV1 authorServiceV1;
 
     public AuthorControllerV1(AuthorServiceV1 authorServiceV1) {
         this.authorServiceV1 = authorServiceV1;
     }
 
     @GetMapping("/{author_id}")
-    public Author getAuthorById(
+    public AuthorDto getAuthorById(
             @PathVariable("author_id")
             @Min(0)
             @Max(100) Long author_id
     ) {
-        Author author = authorServiceV1.findAuthorById(author_id);
-        return author;
+        return authorServiceV1.findAuthorById(author_id);
     }
 
     @PostMapping
-    public Author createAuthor(
+    public AuthorDto createAuthor(
             @Valid
-            @RequestBody Author author
+            @RequestBody AuthorDto authorDto
     ) {
-        Author createdAuthor = authorServiceV1.createAuthor(author);
-        return createdAuthor;
+        return authorServiceV1.createAuthor(authorDto);
     }
 
     @PutMapping("/{author_id}")
-    public Author updateAuthor(
-            @Valid
+    public AuthorDto updateAuthor(
+            @PathVariable(name = "author_id")
             @Min(0)
-            @Max(100)
-            @PathVariable(name = "author_id")Long author_id,
-            @RequestBody Author author
+            @Max(100) Long author_id,
+            @Valid
+            @RequestBody AuthorDto authorDto
     ) {
-        Author updatedAuthor = authorServiceV1.updateAuthor(author_id, author);
-        return updatedAuthor;
+        return authorServiceV1.updateAuthor(author_id, authorDto);
     }
 
     @DeleteMapping("/{author_id}")
     public void deleteAuthor(
+            @PathVariable("author_id")
             @Min(0)
-            @Max(100)
-            @PathVariable("author_id") Long author_id) {
+            @Max(100) Long author_id) {
         authorServiceV1.deleteAuthor(author_id);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.leo_forum_project_test.validator;
 
-import com.example.leo_forum_project_test.dto.Topic;
+import com.example.leo_forum_project_test.entity.TopicE;
 import com.example.leo_forum_project_test.exception.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TopicValidatorV1ImplTest {
+public class TopicEDtoValidatorV1ImplTest {
 
     private TopicValidatorV1Impl topicValidatorV1;
 
@@ -22,9 +22,9 @@ public class TopicValidatorV1ImplTest {
 
     @Test
     public void testValidateCreateValidTopic() {
-        Topic topic = new Topic();
-        topic.setTitle("Valid Title");
-        List<String> errors = topicValidatorV1.validateCreate(topic);
+        TopicE topicE = new TopicE();
+        topicE.setTitle("Valid Title");
+        List<String> errors = topicValidatorV1.validateCreate(topicE);
         assertTrue(errors.isEmpty(), "Ошибки должны отсутствовать");
     }
 
@@ -38,39 +38,39 @@ public class TopicValidatorV1ImplTest {
 
     @Test
     public void testValidateCreateTitleNull() {
-        Topic topic = new Topic();
-        topic.setTitle(null);
+        TopicE topicE = new TopicE();
+        topicE.setTitle(null);
         Exception exception = assertThrows(ValidationException.class, () -> {
-            topicValidatorV1.validateCreate(topic);
+            topicValidatorV1.validateCreate(topicE);
         });
         assertEquals("Топик не должен быть пустым или содержать только пробелы", exception.getMessage());
     }
 
     @Test
     public void testValidateCreateTitleEmpty() {
-        Topic topic = new Topic();
-        topic.setTitle("   ");
+        TopicE topicE = new TopicE();
+        topicE.setTitle("   ");
         Exception exception = assertThrows(ValidationException.class, () -> {
-            topicValidatorV1.validateCreate(topic);
+            topicValidatorV1.validateCreate(topicE);
         });
         assertEquals("Топик не должен быть пустым или содержать только пробелы", exception.getMessage());
     }
 
     @Test
     public void testValidateCreateTitleTooShort() {
-        Topic topic = new Topic();
-        topic.setTitle("ab");
-        List<String> errors = topicValidatorV1.validateCreate(topic);
+        TopicE topicE = new TopicE();
+        topicE.setTitle("ab");
+        List<String> errors = topicValidatorV1.validateCreate(topicE);
         assertFalse(errors.isEmpty());
         assertTrue(errors.contains("Топик не должен содержать меньше 3-х символов или превышать 100"));
     }
 
     @Test
     public void testValidateCreateTitleTooLong() {
-        Topic topic = new Topic();
+        TopicE topicE = new TopicE();
         String longTitle = "a".repeat(101);
-        topic.setTitle(longTitle);
-        List<String> errors = topicValidatorV1.validateCreate(topic);
+        topicE.setTitle(longTitle);
+        List<String> errors = topicValidatorV1.validateCreate(topicE);
         assertFalse(errors.isEmpty());
         assertTrue(errors.contains("Топик не должен содержать меньше 3-х символов или превышать 100"));
     }
@@ -101,10 +101,10 @@ public class TopicValidatorV1ImplTest {
 
     @Test
     public void testValidateUpdateByIdValid() {
-        Topic topic = new Topic();
-        topic.setTitle("Valid Title");
+        TopicE topicE = new TopicE();
+        topicE.setTitle("Valid Title");
 
-        List<String> errors = topicValidatorV1.validateUpdateById(5L, topic);
+        List<String> errors = topicValidatorV1.validateUpdateById(5L, topicE);
 
         assertTrue(errors.isEmpty());
     }
@@ -120,10 +120,10 @@ public class TopicValidatorV1ImplTest {
 
     @Test
     public void testValidateUpdateByIdNegativeId() {
-        Topic topic = new Topic();
-        topic.setTitle("Valid");
+        TopicE topicE = new TopicE();
+        topicE.setTitle("Valid");
 
-        List<String> errors = topicValidatorV1.validateUpdateById(-1L, topic);
+        List<String> errors = topicValidatorV1.validateUpdateById(-1L, topicE);
 
         assertTrue(errors.contains("Идентификатор топика должен быть положительным"));
 
@@ -132,12 +132,12 @@ public class TopicValidatorV1ImplTest {
     @Test
     public void testValidateUpdateByIdTitleNull() {
 
-        Topic topic = new Topic();
-        topic.setTitle(null);
-        topic.setId(1L);
+        TopicE topicE = new TopicE();
+        topicE.setTitle(null);
+        topicE.setId(1L);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
-            topicValidatorV1.validateUpdateById(topic.getId(), topic);
+            topicValidatorV1.validateUpdateById(topicE.getId(), topicE);
         });
 
         // Проверяем сообщение исключения
@@ -148,14 +148,14 @@ public class TopicValidatorV1ImplTest {
 
 @Test
     public void testValidateUpdateByIdTitleTooShortOrLong() {
-        Topic validTopic = new Topic();
-        validTopic.setTitle("ab");
-        List<String> errorsShort = topicValidatorV1.validateUpdateById(1L, validTopic);
+        TopicE validTopicE = new TopicE();
+        validTopicE.setTitle("ab");
+        List<String> errorsShort = topicValidatorV1.validateUpdateById(1L, validTopicE);
         assertTrue(errorsShort.contains("Топик не должен содержать меньше 3-х символов или превышать 100"));
 
         String longTitle = "a".repeat(101);
-        validTopic.setTitle(longTitle);
-        List<String> errorsLong= topicValidatorV1.validateUpdateById(1L, validTopic);
+        validTopicE.setTitle(longTitle);
+        List<String> errorsLong= topicValidatorV1.validateUpdateById(1L, validTopicE);
         assertTrue(errorsLong.contains("Топик не должен содержать меньше 3-х символов или превышать 100"));
     }
 

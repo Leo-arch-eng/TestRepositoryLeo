@@ -1,14 +1,15 @@
 package com.example.leo_forum_project_test.service;
 
-import com.example.leo_forum_project_test.dto.Comment;
+import com.example.leo_forum_project_test.dto.CommentDto;
+import jakarta.validation.Valid;
 
 public interface CommentServiceV1 {
-    Comment createComment(Comment comment);
 
-    Comment getCommentById(Long commentId);
+    CommentDto createComment(@Valid CommentDto commentDto);
 
-    Comment updateCommentById(Long commentId, Comment comment);
+    CommentDto getCommentById(Long commentId);
+
+    CommentDto updateCommentById(Long commentId, @Valid CommentDto commentDto);
 
     void deleteCommentById(Long commentId);
-
 }

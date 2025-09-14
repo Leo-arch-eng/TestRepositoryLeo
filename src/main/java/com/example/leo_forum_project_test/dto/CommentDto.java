@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentDto {
 
-    private Long commentId;
+    private Long id;
 
     @NotBlank(message = "Комментарий не может быть пустым")
     @Size(min = 1, max = 300, message = "Комментарий должен содержать от {min} до {max} символов")

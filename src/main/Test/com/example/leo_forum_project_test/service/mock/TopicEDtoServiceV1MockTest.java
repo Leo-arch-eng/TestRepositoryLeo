@@ -1,6 +1,6 @@
 package com.example.leo_forum_project_test.service.mock;
 
-import com.example.leo_forum_project_test.dto.Topic;
+import com.example.leo_forum_project_test.entity.TopicE;
 import com.example.leo_forum_project_test.repository.TopicRepositoryV1;
 import com.example.leo_forum_project_test.validator.TopicValidatorV1;
 import jakarta.validation.ValidationException;
@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TopicServiceV1MockTest {
+public class TopicEDtoServiceV1MockTest {
 
     @Mock
     private TopicRepositoryV1 topicRepositoryV1;
@@ -27,13 +27,13 @@ public class TopicServiceV1MockTest {
     @InjectMocks
     private TopicServiceV1Mock topicService;
 
-    private Topic sampleTopic;
+    private TopicE sampleTopicE;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        sampleTopic = new Topic(); // заполняйте по необходимости
-        sampleTopic.setId(1L);
+        sampleTopicE = new TopicE();
+        sampleTopicE.setId(1L);
     }
 
     //Тесты create
@@ -41,12 +41,12 @@ public class TopicServiceV1MockTest {
     @Test
     public void testCreateSuccess() {
         when(topicValidatorV1.validateCreate(any())).thenReturn(Collections.emptyList());
-        when(topicRepositoryV1.create(any())).thenReturn(sampleTopic);
+        when(topicRepositoryV1.create(any())).thenReturn(sampleTopicE);
 
-        Topic result = topicService.create(sampleTopic);
+        TopicE result = topicService.create(sampleTopicE);
 
         assertNotNull(result);
-        assertEquals(sampleTopic.getId(), result.getId());
+        assertEquals(sampleTopicE.getId(), result.getId());
         verify(topicValidatorV1).validateCreate(any());
         verify(topicRepositoryV1).create(any());
     }
@@ -57,7 +57,7 @@ public class TopicServiceV1MockTest {
         when(topicValidatorV1.validateCreate(any())).thenReturn(errors);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
-            topicService.create(sampleTopic);
+            topicService.create(sampleTopicE);
         });
 
         assertTrue(exception.getMessage().contains("Error 1"));
@@ -70,12 +70,12 @@ public class TopicServiceV1MockTest {
     @Test
     public void testFindByIdSuccess() {
         when(topicValidatorV1.validateFindById(anyLong())).thenReturn(Collections.emptyList());
-        when(topicRepositoryV1.findById(anyLong())).thenReturn(sampleTopic);
+        when(topicRepositoryV1.findById(anyLong())).thenReturn(sampleTopicE);
 
-        Topic result = topicService.findById(1L);
+        TopicE result = topicService.findById(1L);
 
         assertNotNull(result);
-        assertEquals(sampleTopic.getId(), result.getId());
+        assertEquals(sampleTopicE.getId(), result.getId());
         verify(topicValidatorV1).validateFindById(anyLong());
         verify(topicRepositoryV1).findById(anyLong());
     }
@@ -99,12 +99,12 @@ public class TopicServiceV1MockTest {
     @Test
     public void testUpdateByIdSuccess() {
         when(topicValidatorV1.validateUpdateById(anyLong(), any())).thenReturn(Collections.emptyList());
-        when(topicRepositoryV1.update(anyLong(), any())).thenReturn(sampleTopic);
+        when(topicRepositoryV1.update(anyLong(), any())).thenReturn(sampleTopicE);
 
-        Topic result = topicService.updateById(1L, sampleTopic);
+        TopicE result = topicService.updateById(1L, sampleTopicE);
 
         assertNotNull(result);
-        assertEquals(sampleTopic.getId(), result.getId());
+        assertEquals(sampleTopicE.getId(), result.getId());
         verify(topicValidatorV1).validateUpdateById(anyLong(), any());
         verify(topicRepositoryV1).update(anyLong(), any());
     }
@@ -115,7 +115,7 @@ public class TopicServiceV1MockTest {
         when(topicValidatorV1.validateUpdateById(anyLong(), any())).thenReturn(errors);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
-            topicService.updateById(2L, sampleTopic);
+            topicService.updateById(2L, sampleTopicE);
         });
 
         assertTrue(exception.getMessage().contains("Update error"));
@@ -128,7 +128,7 @@ public class TopicServiceV1MockTest {
         when(topicValidatorV1.validateUpdateById(anyLong(), any())).thenReturn(Collections.emptyList());
         when(topicRepositoryV1.update(anyLong(), any())).thenReturn(null); // не найдено
 
-        Topic result = topicService.updateById(999L, sampleTopic);
+        TopicE result = topicService.updateById(999L, sampleTopicE);
 
         assertNull(result);
         verify(topicRepositoryV1).update(anyLong(), any());
@@ -142,7 +142,7 @@ public class TopicServiceV1MockTest {
 
         doNothing().when(topicRepositoryV1).deleteById(anyLong());
 
-        // вызов метода без исключений
+
         assertDoesNotThrow(() -> topicService.deleteById(3L));
 
         verify(topicValidatorV1).validateDeleteById(3L);
@@ -163,7 +163,6 @@ public class TopicServiceV1MockTest {
         verifyNoMoreInteractions(topicRepositoryV1);
     }
 
-    //тест на исключение при удалении (например, если репозиторий выбрасывает)
     @Test
     public void testDeleteByIdExceptionDuringDeletion() {
         when(topicValidatorV1.validateDeleteById(anyLong())).thenReturn(Collections.emptyList());

@@ -2,13 +2,17 @@ package com.example.leo_forum_project_test.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
+
+@Builder
 @Entity
 @Table(name = "author")
-public class Author {
+public class AuthorE {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authorId;
+    @Column(name ="authorid")
+    private Long id;
 
     @NotBlank(message = "Имя автора не может быть пустым")
     @Size(min = 1, max = 50, message = "Имя автора должно содержать от {min} до {max} символов")
@@ -30,23 +34,23 @@ public class Author {
     @Column(name = "age")
     private int age;
 
-    public Author(Long authorId, String name, String surname, String email, int age) {
-        this.authorId = authorId;
+    public AuthorE(Long id, String name, String surname, String email, int age) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.age = age;
     }
 
-    public Author() {
+    public AuthorE() {
     }
 
-    public Long getAuthorId() {
-        return authorId;
+    public Long getId() {
+        return id;
     }
 
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
+    public void setId(Long authorId) {
+        this.id = authorId;
     }
 
     public String getName() {

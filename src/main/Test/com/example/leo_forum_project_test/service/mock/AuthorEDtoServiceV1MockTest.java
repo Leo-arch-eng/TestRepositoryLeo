@@ -1,6 +1,6 @@
 package com.example.leo_forum_project_test.service.mock;
 
-import com.example.leo_forum_project_test.dto.Author;
+import com.example.leo_forum_project_test.entity.AuthorE;
 import com.example.leo_forum_project_test.repository.AuthorRepositoryV1;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -16,7 +16,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class AuthorServiceV1MockTest {
+public class AuthorEDtoServiceV1MockTest {
 
     @Mock
     private AuthorRepositoryV1 authorRepositoryV1;
@@ -30,31 +30,31 @@ public class AuthorServiceV1MockTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        authorService = new AuthorServiceV1Mock();
+
     }
 
     // Вспомогательный метод для валидации DTO
-    private Set<ConstraintViolation<Author>> validateAuthor(Author author) {
-        return validator.validate(author);
+    private Set<ConstraintViolation<AuthorE>> validateAuthor(AuthorE authorE) {
+        return validator.validate(authorE);
     }
 
     // 1. Тест создания автора с валидными данными
     @Test
     public void testCreateAuthorValid() {
-        Author author = new Author(null, "Иван", "Иванов", "test@example.com", 30);
-        when(authorRepositoryV1.createAuthor(any(Author.class))).thenReturn(author);
+        AuthorE authorE = new AuthorE(null, "Иван", "Иванов", "test@example.com", 30);
+        when(authorRepositoryV1.createAuthor(any(AuthorE.class))).thenReturn(authorE);
 
-        Author result = authorService.createAuthor(author);
+        AuthorE result = authorService.createAuthor(authorE);
 
-        verify(authorRepositoryV1, times(1)).createAuthor(author);
-        assertEquals(author, result);
+        verify(authorRepositoryV1, times(1)).createAuthor(authorE);
+        assertEquals(authorE, result);
     }
 
     // 2. Тест создания автора с некорректными данными (например, пустое имя)
     @Test
     public void testCreateAuthorInvalidData() {
-        Author author = new Author(null, "", "Иванов", "test@example.com", 30);
-        Set<ConstraintViolation<Author>> violations = validateAuthor(author);
+        AuthorE authorE = new AuthorE(null, "", "Иванов", "test@example.com", 30);
+        Set<ConstraintViolation<AuthorE>> violations = validateAuthor(authorE);
         assertFalse(violations.isEmpty());
     }
 
@@ -62,28 +62,28 @@ public class AuthorServiceV1MockTest {
     @Test
     public void testUpdateAuthorSuccess() {
         Long authorId = 1L;
-        Author existingAuthor = new Author(authorId, "Иван", "Иванов", "test@example.com", 30);
-        Author updatedAuthor = new Author(authorId, "Петр", "Петров", "petr@example.com", 40);
+        AuthorE existingAuthorE = new AuthorE(authorId, "Иван", "Иванов", "test@example.com", 30);
+        AuthorE updatedAuthorE = new AuthorE(authorId, "Петр", "Петров", "petr@example.com", 40);
 
-        when(authorRepositoryV1.updateAuthor(eq(authorId), any(Author.class))).thenReturn(updatedAuthor);
+        when(authorRepositoryV1.updateAuthor(eq(authorId), any(AuthorE.class))).thenReturn(updatedAuthorE);
 
-        Author result = authorService.updateAuthor(authorId, updatedAuthor);
+        AuthorE result = authorService.updateAuthor(authorId, updatedAuthorE);
 
-        verify(authorRepositoryV1, times(1)).updateAuthor(eq(authorId), any(Author.class));
-        assertEquals(updatedAuthor, result);
+        verify(authorRepositoryV1, times(1)).updateAuthor(eq(authorId), any(AuthorE.class));
+        assertEquals(updatedAuthorE, result);
     }
 
     // 4. Тест обновления несуществующего автора (возвращается null)
     @Test
     public void testUpdateAuthorNotFound() {
         Long authorId = 999L;
-        Author newData = new Author(null, "Петр", "Петров", "petr@example.com", 40);
+        AuthorE newData = new AuthorE(null, "Петр", "Петров", "petr@example.com", 40);
 
-        when(authorRepositoryV1.updateAuthor(eq(authorId), any(Author.class))).thenReturn(null);
+        when(authorRepositoryV1.updateAuthor(eq(authorId), any(AuthorE.class))).thenReturn(null);
 
-        Author result = authorService.updateAuthor(authorId, newData);
+        AuthorE result = authorService.updateAuthor(authorId, newData);
 
-        verify(authorRepositoryV1, times(1)).updateAuthor(eq(authorId), any(Author.class));
+        verify(authorRepositoryV1, times(1)).updateAuthor(eq(authorId), any(AuthorE.class));
         assertNull(result);
     }
 
@@ -112,13 +112,13 @@ public class AuthorServiceV1MockTest {
     @Test
     public void testFindAuthorByIdFound() {
         Long authorId = 1L;
-        Author author = new Author(authorId, "Иван", "Иванов", "test@example.com", 30);
-        when(authorRepositoryV1.findAuthorById(authorId)).thenReturn(author);
+        AuthorE authorE = new AuthorE(authorId, "Иван", "Иванов", "test@example.com", 30);
+        when(authorRepositoryV1.findAuthorById(authorId)).thenReturn(authorE);
 
-        Author result = authorService.findAuthorById(authorId);
+        AuthorE result = authorService.findAuthorById(authorId);
 
         verify(authorRepositoryV1, times(1)).findAuthorById(authorId);
-        assertEquals(author, result);
+        assertEquals(authorE, result);
     }
 
     // 8. Тест поиска автора по ID, когда не найден
@@ -127,22 +127,19 @@ public class AuthorServiceV1MockTest {
         Long authorId = 999L;
         when(authorRepositoryV1.findAuthorById(authorId)).thenReturn(null);
 
-        Author result = authorService.findAuthorById(authorId);
+        AuthorE result = authorService.findAuthorById(authorId);
 
         verify(authorRepositoryV1).findAuthorById(authorId);
         assertNull(result);
     }
 
-    // 9. Тест валидации при вызове createAuthor (имитация Spring)
+    // 9. Тест валидации при вызове createAuthor
     @Test
     public void testCreateAuthorValidationFails() {
-        Author invalidAuthor = new Author(null, "", "Иванов", "bademail", -5);
-        Set<ConstraintViolation<Author>> violations = validateAuthor(invalidAuthor);
+        AuthorE invalidAuthorE = new AuthorE(null, "", "Иванов", "bademail", -5);
+        Set<ConstraintViolation<AuthorE>> violations = validateAuthor(invalidAuthorE);
         assertFalse(violations.isEmpty());
-        // Можно дополнительно проверить, что валидация обнаружила ошибки
-    }
 
-    // 10. Тест, что при исключении в репозитории логируется ошибка (можно проверить логирование, если настроить)
-    // (Это более сложный сценарий, обычно для логирования используют специальные библиотеки или тестовые фреймворки)
+    }
 
 }

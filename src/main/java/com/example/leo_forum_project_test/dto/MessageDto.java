@@ -8,15 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDto {
 
-    private Long messageId;
+    private Long id;
 
     @NotBlank(message = "Автор не может быть пустым")
     @Size(min = 1, max = 50, message = "Имя автора должно содержать от {min} до {max} символов")

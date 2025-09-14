@@ -1,13 +1,13 @@
 package com.example.leo_forum_project_test.repository;
 
-import com.example.leo_forum_project_test.dto.Comment;
+import com.example.leo_forum_project_test.entity.CommentE;
 
 public interface CommentRepositoryV1 {
-    Comment createComment(Comment comment);
+    CommentE createComment(CommentE commentE);
 
-    Comment getCommentById(Long commentId);
+    CommentE getCommentById(Long commentId);
 
-    Comment updateCommentById(Long commentId, Comment comment);
+    CommentE updateCommentById(Long commentId, CommentE commentE);
 
     void deleteCommentById(Long commentId);
 }

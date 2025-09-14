@@ -3,17 +3,20 @@ package com.example.leo_forum_project_test.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
 @Entity
 @Table(name = "comment")
-public class Comment {
+public class CommentE {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    @Column(name="commentid")
+    private Long id;
 
     @NotBlank(message = "Комментарий не может быть пустым")
     @Size(min = 1, max = 300, message = "Комментарий должен содержать от {min} до {max} символов")
@@ -30,14 +33,7 @@ public class Comment {
     private LocalDateTime localDateTime;
 
 
-    public Comment(String comment, String author, LocalDateTime localDateTime, Long commentId) {
-        this.comment = comment;
-        this.author = author;
-        this.localDateTime = localDateTime;
-        this.commentId = commentId;
-    }
-
-    public Comment() {
+    public CommentE() {
     }
 
     public String getComment() {
@@ -64,12 +60,12 @@ public class Comment {
         this.localDateTime = localDateTime;
     }
 
-    public Long getCommentId() {
-        return commentId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
+    public void setId(Long commentId) {
+        this.id = commentId;
     }
 }
 

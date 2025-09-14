@@ -1,10 +1,12 @@
 package com.example.leo_forum_project_test.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 
+@Builder
 @Entity
 @Table(name = "topic")
-public class Topic {
+public class TopicE {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,13 +19,13 @@ public class Topic {
     @Column(name="description")
     private String description;
 
-    public Topic(Long id, String title, String description) {
+    public TopicE(Long id, String title, String description) {
         this.id = id;
         this.title = title;
         this.description = description;
     }
 
-    public Topic() {
+    public TopicE() {
     }
 
     public Long getId() {

@@ -1,0 +1,110 @@
+package com.example.leo_forum_project_test.service;
+
+import com.example.leo_forum_project_test.dto.TopicDto;
+import com.example.leo_forum_project_test.entity.TopicE;
+import com.example.leo_forum_project_test.mapper.TopicMapper;
+import com.example.leo_forum_project_test.repository.TopicRepositoryV2;
+import com.example.leo_forum_project_test.validator.TopicValidatorV1;
+import jakarta.validation.ValidationException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class TopicServiceV1Impl implements TopicServiceV1 {
+
+    private final TopicRepositoryV2 topicRepositoryV2;
+    private final TopicValidatorV1 topicValidatorV1;
+    private final TopicMapper topicMapper;
+
+    @Override
+    public TopicDto create(TopicDto topicDto) {
+        log.info("Создание нового топика DTO: {}", topicDto);
+
+        TopicE topicE = topicMapper.toEntity(topicDto);
+
+        List<String> errors = topicValidatorV1.validateCreate(topicE);
+        if (!errors.isEmpty()) {
+            log.error("Ошибки валидации: {}", errors);
+            throw new ValidationException(String.join("; ", errors));
+        }
+
+        TopicE createdTopicE = topicRepositoryV2.save(topicE);
+        log.info("Топик создан успешно с ID: {}", createdTopicE.getId());
+
+        return topicMapper.toDto(createdTopicE);
+    }
+
+    @Override
+    public TopicDto findById(Long topicId) {
+        log.info("Начинается поиск топика по идентификатору: {}", topicId);
+
+        List<String> errors = topicValidatorV1.validateFindById(topicId);
+        if (!errors.isEmpty()) {
+            log.error("Ошибка валидации : {}", errors);
+            throw new ValidationException(String.join("; ", errors));
+        }
+
+        Optional<TopicE> optionalTopic = topicRepositoryV2.findById(topicId);
+        if (optionalTopic.isEmpty()) {
+            log.warn("Топик с идентификатором = {} не найден", topicId);
+            throw new ValidationException("Топик с id " + topicId + " не найден");
+        }
+
+        log.info("Топик с идентификатором {} успешно найден", topicId);
+        return topicMapper.toDto(optionalTopic.get());
+    }
+
+    @Override
+    public TopicDto updateById(Long topicId, TopicDto topicDto) {
+        log.info("Обновление топика с идентификатором: {}, DTO: {}", topicId, topicDto);
+
+        TopicE topicEForValidation = topicMapper.toEntity(topicDto);
+        List<String> errors = topicValidatorV1.validateUpdateById(topicId, topicEForValidation);
+        if (!errors.isEmpty()) {
+            log.error("Ошибки валидации при обновлении топика: {}", errors);
+            throw new ValidationException(String.join("; ", errors));
+        }
+
+        Optional<TopicE> existingTopicOpt = topicRepositoryV2.findById(topicId);
+        if (existingTopicOpt.isEmpty()) {
+            log.warn("Топик с идентификатором {} не найден", topicId);
+            throw new ValidationException("Топик с id " + topicId + " не найден");
+        }
+
+        TopicE existingTopicE = existingTopicOpt.get();
+        existingTopicE.setTitle(topicDto.getTitle());
+        existingTopicE.setDescription(topicDto.getDescription());
+
+        TopicE updatedTopicE = topicRepositoryV2.save(existingTopicE);
+
+        log.info("Топик с идентификатором {} обновлен успешно", topicId);
+
+        return topicMapper.toDto(updatedTopicE);
+    }
+
+    @Override
+    public void deleteById(Long topicId) {
+        log.info("Начинается поиск топика для удаления по идентификатору: {}", topicId);
+
+        List<String> errors = topicValidatorV1.validateDeleteById(topicId);
+        if (!errors.isEmpty()) {
+            log.error("Ошибки валидации при удалении топика: {}", errors);
+            throw new ValidationException(String.join("; ", errors));
+        }
+
+        Optional<TopicE> existingTopic = topicRepositoryV2.findById(topicId);
+        if (existingTopic.isEmpty()) {
+            log.warn("Топик с идентификатором {} не найден для удаления", topicId);
+            throw new ValidationException("Топик с id " + topicId + " не найден");
+        }
+
+        topicRepositoryV2.deleteById(topicId);
+        log.info("Топик с ID {} удален успешно", topicId);
+    }
+}

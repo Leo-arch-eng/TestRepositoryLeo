@@ -1,15 +1,15 @@
 package com.example.leo_forum_project_test.repository;
 
-import com.example.leo_forum_project_test.dto.Topic;
+import com.example.leo_forum_project_test.entity.TopicE;
 
 public interface TopicRepositoryV1{
-    Topic create(Topic topic);
+    TopicE create(TopicE topicE);
 
-    Topic findById(Long topicId);
+    TopicE findById(Long topicId);
 
     void deleteById(Long topicId);
 
-    Topic update(Long topicId, Topic topic);
+    TopicE update(Long topicId, TopicE topicE);
 
 
 }

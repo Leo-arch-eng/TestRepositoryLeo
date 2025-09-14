@@ -1,15 +1,15 @@
 package com.example.leo_forum_project_test.service;
 
-
-import com.example.leo_forum_project_test.dto.Topic;
+import com.example.leo_forum_project_test.dto.TopicDto;
+import jakarta.validation.Valid;
 
 public interface TopicServiceV1 {
 
-    Topic create(Topic topic);
+    TopicDto create(@Valid TopicDto topicDto);
 
-    Topic findById(Long topicId);
+    TopicDto findById(Long topicId);
 
-    Topic update(Long topicId, Topic topic);
+    TopicDto updateById(Long topicId, @Valid TopicDto topicDto);
 
     void deleteById(Long topicId);
 }

@@ -1,16 +1,16 @@
 package com.example.leo_forum_project_test.service;
 
-import com.example.leo_forum_project_test.dto.Author;
+import com.example.leo_forum_project_test.dto.AuthorDto;
+import jakarta.validation.Valid;
 
 public interface AuthorServiceV1 {
 
-        Author createAuthor(Author author);
+    AuthorDto createAuthor(@Valid AuthorDto authorDto);
 
-        Author updateAuthor(Long authorId,Author author);
-        ;
-        void deleteAuthor(Long authorId);
+    AuthorDto updateAuthor(Long authorId, @Valid AuthorDto authorDto);
 
-        Author findAuthorById(Long authorId);
+    void deleteAuthor(Long authorId);
 
-    }
+    AuthorDto findAuthorById(Long authorId);
 
+}
