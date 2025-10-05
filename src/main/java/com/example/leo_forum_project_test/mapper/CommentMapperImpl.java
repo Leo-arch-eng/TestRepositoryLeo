@@ -22,15 +22,22 @@ public class CommentMapperImpl implements CommentMapper{
 
     @Override
     public CommentE toEntity(CommentDto commentDto) {
-        LocalDateTime localDateTime;
-        try {
-           localDateTime = LocalDateTime.parse(commentDto.getDate());
-        } catch (DateTimeParseException e) {
-            log.error("Не удалось преобразовать тип 'String' в тип 'LocalDateTime'. \" +\n" +
-                    "                    \"Доп информация об ошибке: %s \".formatted(e.getLocalizedMessage()),\n" +
-                    "                    e");
-            throw new RuntimeException(e);
+        log.info("toEntity");
+        LocalDateTime localDateTime = null;
+        String dateString = commentDto.getDate();
+
+        if (dateString != null && dateString.isBlank()) {
+            try {
+                localDateTime = LocalDateTime.parse(dateString);
+            } catch (DateTimeParseException e) {
+                log.error("Не удалось преобразовать тип 'String' в тип 'LocalDateTime'. \" +\n" +
+                        "                    \"Доп информация об ошибке: %s \".formatted(e.getLocalizedMessage()),\n" +
+                        "                    e"
+                );
+                throw new RuntimeException(e);
+            }
         }
+
         return new CommentE(
                 null,
                 commentDto.getComment(),

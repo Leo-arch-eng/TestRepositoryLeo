@@ -1,5 +1,6 @@
 package com.example.leo_forum_project_test.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,7 +16,7 @@ public class CommentE {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="commentid")
+    @Column(name="comment_id")
     private Long id;
 
     @NotBlank(message = "Комментарий не может быть пустым")
@@ -30,6 +31,7 @@ public class CommentE {
 
     @CreationTimestamp
     @Column(name = "date", nullable = false, updatable = false)
+    @JsonProperty("localDate")
     private LocalDateTime localDateTime;
 
 

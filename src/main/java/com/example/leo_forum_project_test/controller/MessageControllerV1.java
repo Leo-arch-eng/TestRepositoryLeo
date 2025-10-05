@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/v1/topic/message")
 public class MessageControllerV1 {
 
     private final MessageServiceV1 messageService;
