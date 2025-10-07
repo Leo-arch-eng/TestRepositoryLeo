@@ -5,8 +5,11 @@ import com.example.leo_forum_project_test.service.AuthorServiceV1;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RestController
@@ -53,5 +56,15 @@ public class AuthorControllerV1 {
             @Min(0)
             @Max(100) Long author_id) {
         authorServiceV1.deleteAuthor(author_id);
+    }
+
+    @GetMapping("/allAuthors")
+    public ResponseEntity<List<AuthorDto>> getAllAuthors() {
+        List<AuthorDto> authorDto = authorServiceV1.findAllAuthors();
+        try {
+            return ResponseEntity.ok(authorDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }

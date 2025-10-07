@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/topic")
 public class TopicControllerV1 {
@@ -64,6 +66,15 @@ public class TopicControllerV1 {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Ошибка при удалении топика");
+        }
+    }
+    @GetMapping("/allTopics")
+    public ResponseEntity<List<TopicDto>> getAllTopics() {
+        try {
+            List<TopicDto> topicDto = topicServiceV1.findAllTopic();
+            return ResponseEntity.ok(topicDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -106,5 +107,19 @@ public class TopicServiceV1Impl implements TopicServiceV1 {
 
         topicRepositoryV2.deleteById(topicId);
         log.info("Топик с ID {} удален успешно", topicId);
+    }
+
+    @Override
+    public List<TopicDto> findAllTopic() {
+        log.info("Начинается поиск всех топиков");
+        List<TopicE> topics = topicRepositoryV2.findAll();
+        if (topics.isEmpty()) {
+            log.warn("Список топиков пуст");
+            throw new ValidationException("Список топиков " + topics + "не найден");
+        }
+        log.info("Список топиков успешно найден");
+        return topics.stream()
+                .map(topicMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

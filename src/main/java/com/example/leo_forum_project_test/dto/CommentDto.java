@@ -1,6 +1,5 @@
 package com.example.leo_forum_project_test.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
