@@ -2,6 +2,8 @@ package com.example.leo_forum_project_test.controller;
 
 import com.example.leo_forum_project_test.dto.MessageDto;
 import com.example.leo_forum_project_test.service.MessageServiceV1;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,11 +47,13 @@ public class MessageControllerV1 {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/allMessages")
-    public ResponseEntity<List<MessageDto>> getAllMessages() {
-        try{
-            List<MessageDto>messageDto = messageServiceV1.findAllMessage();
-            return ResponseEntity.ok(messageDto);
-        }catch (Exception e){
+    public ResponseEntity<List<MessageDto>> getAllMessagesPaginated(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
+        try {
+            List<MessageDto> messages = messageServiceV1.findAllMessagesPaginated(page, size);
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
     }

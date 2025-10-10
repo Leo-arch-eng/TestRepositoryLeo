@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -90,15 +93,15 @@ public class CommentServiceV1Impl implements CommentServiceV1 {
     }
 
     @Override
-    public List<CommentDto> findAllComments() {
-        log.info("Начинается поиск всех комментариев");
-        List<CommentE> comments = commentRepositoryV2.findAll();
+    public List<CommentDto> findAllCommentsPaginated(int page, int size) {
+        log.info("Поиск комментариев с пагинацией: страница {}, размер {}", page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CommentE> pageComments = commentRepositoryV2.findAll(pageable);
+        List<CommentE> comments = pageComments.getContent();
         if (comments.isEmpty()) {
-            log.warn("Ни одного комментария не существует");
-            throw new ValidationException("Ошибка валидации.Запрашиваемый список "
-                    + comments + "комментариев пуст");
+            log.warn("Ни одного комментария не найдено на странице");
+            throw new ValidationException("Запрашиваемый список комментариев пуст");
         }
-        log.info("Запрашиваемый список комментариев успешно найден");
         return comments.stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());

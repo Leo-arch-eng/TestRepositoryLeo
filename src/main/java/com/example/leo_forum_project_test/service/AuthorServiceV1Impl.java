@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -80,6 +83,13 @@ public class AuthorServiceV1Impl implements AuthorServiceV1 {
         }
         log.info("Список авторов успешно найден");
         return authors.stream()
+                .map(authorMapper::toDto)
+                .collect(Collectors.toList());
+    }
+    public List<AuthorDto> findAllAuthorsPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AuthorE> authorPage = authorRepositoryV2.findAll(pageable);
+        return authorPage.stream()
                 .map(authorMapper::toDto)
                 .collect(Collectors.toList());
     }

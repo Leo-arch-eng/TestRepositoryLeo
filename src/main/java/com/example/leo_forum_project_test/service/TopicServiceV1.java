@@ -16,4 +16,6 @@ public interface TopicServiceV1 {
     void deleteById(Long topicId);
 
     List<TopicDto> findAllTopic();
+
+    List<TopicDto> findAllTopicsPaginated(int page, int size);
 }

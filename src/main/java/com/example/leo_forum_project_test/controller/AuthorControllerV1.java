@@ -59,10 +59,12 @@ public class AuthorControllerV1 {
     }
 
     @GetMapping("/allAuthors")
-    public ResponseEntity<List<AuthorDto>> getAllAuthors() {
-        List<AuthorDto> authorDto = authorServiceV1.findAllAuthors();
+    public ResponseEntity<List<AuthorDto>> findAllAuthors(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
         try {
-            return ResponseEntity.ok(authorDto);
+            List<AuthorDto> authors = authorServiceV1.findAllAuthorsPaginated(page, size);
+            return ResponseEntity.ok(authors);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }

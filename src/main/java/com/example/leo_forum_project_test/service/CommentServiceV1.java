@@ -15,5 +15,6 @@ public interface CommentServiceV1 {
 
     void deleteCommentById(Long commentId);
 
-    List<CommentDto> findAllComments();
+    List<CommentDto> findAllCommentsPaginated(int page, int size);
+
 }

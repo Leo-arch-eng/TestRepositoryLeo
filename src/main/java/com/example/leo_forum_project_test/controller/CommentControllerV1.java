@@ -3,6 +3,7 @@ package com.example.leo_forum_project_test.controller;
 import com.example.leo_forum_project_test.dto.CommentDto;
 import com.example.leo_forum_project_test.service.CommentServiceV1;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +62,13 @@ public class CommentControllerV1 {
         commentServiceV1.deleteCommentById(commentId);
     }
     @GetMapping("/allComments")
-    public ResponseEntity<List<CommentDto>>getAllComments() {
-        try{
-            List<CommentDto> commentDto = commentServiceV1.findAllComments();
-            return ResponseEntity.ok(commentDto);
-        }catch (Exception e){
+    public ResponseEntity<List<CommentDto>> getCommentsPaginated(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
+        try {
+            List<CommentDto> comments = commentServiceV1.findAllCommentsPaginated(page, size);
+            return ResponseEntity.ok(comments);
+        }  catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
     }

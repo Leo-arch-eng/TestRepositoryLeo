@@ -8,6 +8,9 @@ import com.example.leo_forum_project_test.validator.TopicValidatorV1;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -118,6 +121,15 @@ public class TopicServiceV1Impl implements TopicServiceV1 {
             throw new ValidationException("Список топиков " + topics + "не найден");
         }
         log.info("Список топиков успешно найден");
+        return topics.stream()
+                .map(topicMapper::toDto)
+                .collect(Collectors.toList());
+    }
+    public List<TopicDto> findAllTopicsPaginated(int page, int size) {
+        log.info("Поиск топиков с пагинацией: страница {}, размер {}", page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TopicE> pageTopics = topicRepositoryV2.findAll(pageable);
+        List<TopicE> topics = pageTopics.getContent();
         return topics.stream()
                 .map(topicMapper::toDto)
                 .collect(Collectors.toList());

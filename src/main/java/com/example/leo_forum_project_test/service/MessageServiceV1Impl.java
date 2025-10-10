@@ -8,9 +8,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -110,15 +111,16 @@ public class MessageServiceV1Impl implements MessageServiceV1 {
     }
 
     @Override
-    public List<MessageDto> findAllMessage() {
-        log.info("Начинается поиск всех сообщений в БД");
-        List<MessageE> messages = messageRepositoryV2.findAll();
-        if (messages.isEmpty()) {
+    public List<MessageDto> findAllMessagesPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MessageE> messagePage = messageRepositoryV2.findAll(pageable);
+        if (messagePage.isEmpty()) {
             log.warn("Список сообщений пуст");
-            throw new ValidationException("Список +" + messages + "не найден");
+            throw new ValidationException("Сообщения не найдены");
         }
-        log.info("Список сообщений успешной найден");
-        return messages.stream()
+        log.info("Обнаружено {} сообщений", messagePage.getTotalElements());
+        return messagePage.getContent()
+                .stream()
                 .map(messageMapper::toDto)
                 .collect(Collectors.toList());
     }

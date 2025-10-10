@@ -69,10 +69,12 @@ public class TopicControllerV1 {
         }
     }
     @GetMapping("/allTopics")
-    public ResponseEntity<List<TopicDto>> getAllTopics() {
+    public ResponseEntity<List<TopicDto>> getAllTopicsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            List<TopicDto> topicDto = topicServiceV1.findAllTopic();
-            return ResponseEntity.ok(topicDto);
+            List<TopicDto> topics = topicServiceV1.findAllTopicsPaginated(page, size);
+            return ResponseEntity.ok(topics);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
