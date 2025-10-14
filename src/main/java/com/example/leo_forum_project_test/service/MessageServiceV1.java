@@ -14,5 +14,5 @@ public interface MessageServiceV1 {
 
     void deleteMessage(Long messageId);
 
-    List<MessageDto> findAllMessagesPaginated(int page, int size);
+    List<MessageDto> findAllMessagesPaginated(int page, int size, String sortBy, String sortDir);
 }

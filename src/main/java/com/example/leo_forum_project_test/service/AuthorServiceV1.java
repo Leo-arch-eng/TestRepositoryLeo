@@ -17,6 +17,6 @@ public interface AuthorServiceV1 {
 
     List<AuthorDto> findAllAuthors();
 
-    List<AuthorDto> findAllAuthorsPaginated(int page, int size);
+    List<AuthorDto> findAllAuthorsPaginated(int page, int size, String sortBy, String sortDir);
 
 }

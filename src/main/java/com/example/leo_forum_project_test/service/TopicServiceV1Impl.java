@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -125,13 +126,45 @@ public class TopicServiceV1Impl implements TopicServiceV1 {
                 .map(topicMapper::toDto)
                 .collect(Collectors.toList());
     }
-    public List<TopicDto> findAllTopicsPaginated(int page, int size) {
-        log.info("Поиск топиков с пагинацией: страница {}, размер {}", page, size);
-        Pageable pageable = PageRequest.of(page, size);
+
+    @Override
+    public List<TopicDto> findAllTopicsPaginated(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir
+    ) {
+        if (!isFieldSortable(sortBy)) {
+            throw new ValidationException("Недопустимое поле сортировки: " + sortBy);
+        }
+        Sort.Direction direction = Sort.Direction.ASC;
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            direction = Sort.Direction.DESC;
+        } else if (!"asc".equalsIgnoreCase(sortDir)) {
+            throw new ValidationException("Недопустимое направление сортировки: " + sortDir);
+        }
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<TopicE> pageTopics = topicRepositoryV2.findAll(pageable);
-        List<TopicE> topics = pageTopics.getContent();
-        return topics.stream()
+
+        if (pageTopics.isEmpty()) {
+            log.warn("Список топиков пуст");
+            throw new ValidationException("Топики не найдены");
+        }
+
+        log.info("Обнаружено {} топиков", pageTopics.getTotalElements());
+
+        return pageTopics.getContent()
+                .stream()
                 .map(topicMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    // Вспомогательный метод для проверки полей сортировки
+    private boolean isFieldSortable(String fieldName) {
+        return "id".equals(fieldName) ||
+                "title".equals(fieldName) ||
+                "description".equals(fieldName);
     }
 }

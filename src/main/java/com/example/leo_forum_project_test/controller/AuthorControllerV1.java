@@ -58,12 +58,14 @@ public class AuthorControllerV1 {
         authorServiceV1.deleteAuthor(author_id);
     }
 
-    @GetMapping("/allAuthors")
+    @GetMapping("/allAuthor")
     public ResponseEntity<List<AuthorDto>> findAllAuthors(
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
         try {
-            List<AuthorDto> authors = authorServiceV1.findAllAuthorsPaginated(page, size);
+            List<AuthorDto> authors = authorServiceV1.findAllAuthorsPaginated(page, size, sortBy, sortDir);
             return ResponseEntity.ok(authors);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);

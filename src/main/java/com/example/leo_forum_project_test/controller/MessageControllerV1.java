@@ -1,5 +1,6 @@
 package com.example.leo_forum_project_test.controller;
 
+import com.example.leo_forum_project_test.dto.CommentDto;
 import com.example.leo_forum_project_test.dto.MessageDto;
 import com.example.leo_forum_project_test.service.MessageServiceV1;
 import jakarta.validation.constraints.Max;
@@ -46,12 +47,14 @@ public class MessageControllerV1 {
         messageServiceV1.deleteMessage(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/allMessages")
-    public ResponseEntity<List<MessageDto>> getAllMessagesPaginated(
-            @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
+    @GetMapping("/allMessage")
+    public ResponseEntity<List<MessageDto>> getMessages(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "authorName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
         try {
-            List<MessageDto> messages = messageServiceV1.findAllMessagesPaginated(page, size);
+            List<MessageDto> messages = messageServiceV1.findAllMessagesPaginated(page, size, sortBy, sortDir);
             return ResponseEntity.ok(messages);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);

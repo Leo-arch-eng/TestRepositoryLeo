@@ -61,12 +61,14 @@ public class CommentControllerV1 {
     ) {
         commentServiceV1.deleteCommentById(commentId);
     }
-    @GetMapping("/allComments")
+    @GetMapping("/allComment")
     public ResponseEntity<List<CommentDto>> getCommentsPaginated(
-            @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "author") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
         try {
-            List<CommentDto> comments = commentServiceV1.findAllCommentsPaginated(page, size);
+            List<CommentDto> comments = commentServiceV1.findAllCommentsPaginated(page, size, sortBy,sortDir);
             return ResponseEntity.ok(comments);
         }  catch (Exception e) {
             return ResponseEntity.status(500).body(null);

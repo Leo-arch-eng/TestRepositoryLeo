@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -93,17 +94,47 @@ public class CommentServiceV1Impl implements CommentServiceV1 {
     }
 
     @Override
-    public List<CommentDto> findAllCommentsPaginated(int page, int size) {
-        log.info("Поиск комментариев с пагинацией: страница {}, размер {}", page, size);
-        Pageable pageable = PageRequest.of(page, size);
+    public List<CommentDto> findAllCommentsPaginated(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir
+    ) {
+        log.info("Поиск комментариев с пагинацией: страница {}, размер {}, сортировка по {}," +
+                " направление {}", page, size, sortBy, sortDir);
+
+        if (!isFieldSortable(sortBy)) {
+            throw new ValidationException("Недопустимое поле сортировки: " + sortBy);
+        }
+        Sort.Direction direction = Sort.Direction.ASC;
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            direction = Sort.Direction.DESC;
+        } else if (!"asc".equalsIgnoreCase(sortDir)) {
+            throw new ValidationException("Недопустимое направление сортировки: " + sortDir);
+        }
+
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<CommentE> pageComments = commentRepositoryV2.findAll(pageable);
-        List<CommentE> comments = pageComments.getContent();
-        if (comments.isEmpty()) {
+
+        if (pageComments.isEmpty()) {
             log.warn("Ни одного комментария не найдено на странице");
             throw new ValidationException("Запрашиваемый список комментариев пуст");
         }
-        return comments.stream()
+
+        log.info("Обнаружено {} комментариев", pageComments.getTotalElements());
+
+        return pageComments.getContent().stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    // Вспомогательный метод для проверки поля сортировки комментариев
+    private boolean isFieldSortable(String fieldName) {
+        return "id".equals(fieldName) ||
+                "comment".equals(fieldName) ||
+                "author".equals(fieldName) ||
+                "localDateTime".equals(fieldName);
     }
 }

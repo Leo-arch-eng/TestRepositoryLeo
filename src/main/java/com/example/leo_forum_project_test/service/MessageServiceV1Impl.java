@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -111,17 +112,47 @@ public class MessageServiceV1Impl implements MessageServiceV1 {
     }
 
     @Override
-    public List<MessageDto> findAllMessagesPaginated(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public List<MessageDto> findAllMessagesPaginated(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir
+    ) {
+        if (!isFieldSortable(sortBy)) {
+            throw new ValidationException("Недопустимое поле сортировки: " + sortBy);
+        }
+        Sort.Direction direction = Sort.Direction.ASC;
+
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            direction = Sort.Direction.DESC;
+        } else if (!"asc".equalsIgnoreCase(sortDir)) {
+            throw new ValidationException("Недопустимое направление сортировки: " + sortDir);
+        }
+
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<MessageE> messagePage = messageRepositoryV2.findAll(pageable);
+
         if (messagePage.isEmpty()) {
             log.warn("Список сообщений пуст");
             throw new ValidationException("Сообщения не найдены");
         }
+
         log.info("Обнаружено {} сообщений", messagePage.getTotalElements());
+
         return messagePage.getContent()
                 .stream()
                 .map(messageMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    // Вспомогательный метод для проверки поля сортировки
+    private boolean isFieldSortable(String fieldName) {
+        return "messageId".equals(fieldName) ||
+                "authorName".equals(fieldName) ||
+                "authorSurname".equals(fieldName) ||
+                "message".equals(fieldName) ||
+                "localDateTime".equals(fieldName);
     }
 }

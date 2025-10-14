@@ -15,6 +15,6 @@ public interface CommentServiceV1 {
 
     void deleteCommentById(Long commentId);
 
-    List<CommentDto> findAllCommentsPaginated(int page, int size);
+    List<CommentDto> findAllCommentsPaginated(int page, int size, String sortBy, String sortDir);
 
 }

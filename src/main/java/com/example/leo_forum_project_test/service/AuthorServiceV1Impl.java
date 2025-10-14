@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -86,11 +87,48 @@ public class AuthorServiceV1Impl implements AuthorServiceV1 {
                 .map(authorMapper::toDto)
                 .collect(Collectors.toList());
     }
-    public List<AuthorDto> findAllAuthorsPaginated(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    @Override
+    public List<AuthorDto> findAllAuthorsPaginated(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir
+    ) {
+        if (!isFieldSortable(sortBy)) {
+            throw new ValidationException("Недопустимое поле сортировки: " + sortBy);
+        }
+
+        Sort.Direction direction = Sort.Direction.ASC;
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            direction = Sort.Direction.DESC;
+        } else if (!"asc".equalsIgnoreCase(sortDir)) {
+            throw new ValidationException("Недопустимое направление сортировки: " + sortDir);
+        }
+
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<AuthorE> authorPage = authorRepositoryV2.findAll(pageable);
-        return authorPage.stream()
+
+        if (authorPage.isEmpty()) {
+            log.warn("Список авторов пуст");
+            throw new ValidationException("Авторы не найдены");
+        }
+
+        log.info("Обнаружено {} авторов", authorPage.getTotalElements());
+
+        return authorPage.getContent()
+                .stream()
                 .map(authorMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    // Вспомогательный метод проверки сортируемых полей для автора
+    private boolean isFieldSortable(String fieldName) {
+        return "id".equals(fieldName) ||
+                "name".equals(fieldName) ||
+                "surname".equals(fieldName) ||
+                "email".equals(fieldName) ||
+                "age".equals(fieldName);
     }
 }

@@ -4,6 +4,8 @@ import com.example.leo_forum_project_test.dto.TopicDto;
 import com.example.leo_forum_project_test.service.TopicServiceV1;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,12 +70,14 @@ public class TopicControllerV1 {
             return ResponseEntity.status(500).body("Ошибка при удалении топика");
         }
     }
-    @GetMapping("/allTopics")
+    @GetMapping("/allTopic")
     public ResponseEntity<List<TopicDto>> getAllTopicsPaginated(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
         try {
-            List<TopicDto> topics = topicServiceV1.findAllTopicsPaginated(page, size);
+            List<TopicDto> topics = topicServiceV1.findAllTopicsPaginated(page, size, sortBy, sortDir);
             return ResponseEntity.ok(topics);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);

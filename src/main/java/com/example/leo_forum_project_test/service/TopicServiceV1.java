@@ -17,5 +17,5 @@ public interface TopicServiceV1 {
 
     List<TopicDto> findAllTopic();
 
-    List<TopicDto> findAllTopicsPaginated(int page, int size);
+    List<TopicDto> findAllTopicsPaginated(int page, int size, String sortBy, String sortDir);
 }
