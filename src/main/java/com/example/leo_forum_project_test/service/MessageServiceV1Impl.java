@@ -1,9 +1,15 @@
 package com.example.leo_forum_project_test.service;
 
+import com.example.leo_forum_project_test.dto.CommentDto;
+import com.example.leo_forum_project_test.dto.MessageCompositeDto;
 import com.example.leo_forum_project_test.dto.MessageDto;
+import com.example.leo_forum_project_test.entity.CommentE;
 import com.example.leo_forum_project_test.entity.MessageE;
+import com.example.leo_forum_project_test.entity.TopicE;
 import com.example.leo_forum_project_test.mapper.MessageMapper;
+import com.example.leo_forum_project_test.repository.CommentRepositoryV2;
 import com.example.leo_forum_project_test.repository.MessageRepositoryV2;
+import com.example.leo_forum_project_test.repository.TopicRepositoryV2;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +33,28 @@ import java.util.stream.Collectors;
 @Service
 public class MessageServiceV1Impl implements MessageServiceV1 {
 
+    private final TopicRepositoryV2 topicRepositoryV2;
     private final MessageRepositoryV2 messageRepositoryV2;
     private final MessageMapper messageMapper;
+    private final CommentRepositoryV2 commentRepositoryV2;
 
     @Override
     public MessageDto createMessage(@Valid MessageDto messageDto) {
+        Long topicId = messageDto.getTopicId();
+        Optional<TopicE> topicOptional = topicRepositoryV2.findById(topicId);
+        if (topicOptional.isEmpty()) {
+            throw new RuntimeException("Топик с id " + topicId + " не найден");
+        }
+
+        TopicE topic = topicOptional.get();
+
         log.info("Создание нового сообщения DTO: {}", messageDto);
 
         MessageE messageEEntity = messageMapper.toEntity(messageDto);
+        // Важно! Установить связь с топиком:
+        messageEEntity.setTopicId(topicId);
 
         MessageE createdMessageE = messageRepositoryV2.save(messageEEntity);
-
         MessageDto createdDto = messageMapper.toDto(createdMessageE);
 
         log.info("Успешно создано сообщение DTO: {}", createdDto);
@@ -145,6 +162,36 @@ public class MessageServiceV1Impl implements MessageServiceV1 {
                 .stream()
                 .map(messageMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public MessageCompositeDto getMessageWithComment(Long messageId) {
+        //находим сообщение
+        MessageE message = messageRepositoryV2.findById(messageId).
+                orElseThrow(() -> new ValidationException("Сообщение с id " + messageId + "не найден"));
+
+        //получаем комментарий к этому сообщению
+        List<CommentE> commentEntity = commentRepositoryV2.findMessageById(messageId);
+        //преобразуем комментарии в дто
+
+        List<CommentDto> commentDto = commentEntity.stream()
+                .map(cmt -> new CommentDto(
+                        cmt.getId(),
+                        cmt.getComment(),
+                        cmt.getAuthor(),
+                        cmt.getLocalDateTime().toString(),
+                        cmt.getMessageId()
+                ))
+                .collect(Collectors.toList());
+        return new MessageCompositeDto(
+                message.getMessageId(),
+                message.getAuthorName(),
+                message.getAuthorSurname(),
+                message.getMessage(),
+                message.getLocalDateTime().toString(),
+                message.getTopicId(),
+                commentDto
+        );
     }
 
     // Вспомогательный метод для проверки поля сортировки

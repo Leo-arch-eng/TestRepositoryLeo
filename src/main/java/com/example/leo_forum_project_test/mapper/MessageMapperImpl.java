@@ -12,6 +12,7 @@ import java.time.format.DateTimeParseException;
 @Service
 public class MessageMapperImpl implements MessageMapper{
 
+
     @Override
     public MessageDto toDto(MessageE messageE) {
         return new MessageDto(
@@ -19,7 +20,8 @@ public class MessageMapperImpl implements MessageMapper{
                 messageE.getAuthorName(),
                 messageE.getAuthorSurname(),
                 messageE.getMessage(),
-                messageE.getLocalDateTime().toString()
+                messageE.getLocalDateTime().toString(),
+                messageE.getTopicId()
         );
     }
 
@@ -47,7 +49,9 @@ public class MessageMapperImpl implements MessageMapper{
                 messageDto.getAuthorName(),
                 messageDto.getAuthorSurname(),
                 messageDto.getMessage(),
-                localDateTime
+                localDateTime,
+                messageDto.getTopicId()
+
         );
     }
 }

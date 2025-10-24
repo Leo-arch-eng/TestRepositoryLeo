@@ -1,6 +1,8 @@
 package com.example.leo_forum_project_test.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +26,11 @@ public class CommentDto {
     private String author;
 
     private String date;
+
+    @NotNull(message = "ID сообщения не может быть null")
+    @Min(value = 0, message = "ID топика должно быть больше или равно 0")
+    private Long messageId;
+
 }
 
 

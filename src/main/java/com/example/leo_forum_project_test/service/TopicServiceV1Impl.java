@@ -1,8 +1,12 @@
 package com.example.leo_forum_project_test.service;
 
+import com.example.leo_forum_project_test.dto.MessageDto;
 import com.example.leo_forum_project_test.dto.TopicDto;
+import com.example.leo_forum_project_test.dto.TopicCompositeDto;
+import com.example.leo_forum_project_test.entity.MessageE;
 import com.example.leo_forum_project_test.entity.TopicE;
 import com.example.leo_forum_project_test.mapper.TopicMapper;
+import com.example.leo_forum_project_test.repository.MessageRepositoryV2;
 import com.example.leo_forum_project_test.repository.TopicRepositoryV2;
 import com.example.leo_forum_project_test.validator.TopicValidatorV1;
 import jakarta.validation.ValidationException;
@@ -26,6 +30,7 @@ public class TopicServiceV1Impl implements TopicServiceV1 {
     private final TopicRepositoryV2 topicRepositoryV2;
     private final TopicValidatorV1 topicValidatorV1;
     private final TopicMapper topicMapper;
+    private final MessageRepositoryV2 messageRepositoryV2;
 
     @Override
     public TopicDto create(TopicDto topicDto) {
@@ -166,5 +171,33 @@ public class TopicServiceV1Impl implements TopicServiceV1 {
         return "id".equals(fieldName) ||
                 "title".equals(fieldName) ||
                 "description".equals(fieldName);
+    }
+    public TopicCompositeDto getTopicWithMessages(Long topicId) {
+        // Находим топик
+        TopicE topic = topicRepositoryV2.findById(topicId)
+                .orElseThrow(() -> new ValidationException("Топик с id " + topicId + " не найден"));
+
+        // Получаем сообщения для этого топика
+        List<MessageE> messageEntity = messageRepositoryV2.findByTopicId(topicId);
+
+        // Преобразуем сообщения в DTO
+        List<MessageDto> messageDto = messageEntity.stream()
+                .map(msg -> new MessageDto(
+                        msg.getMessageId(),
+                        msg.getAuthorName(),
+                        msg.getAuthorSurname(),
+                        msg.getMessage(),
+                        msg.getLocalDateTime().toString(),
+                        msg.getTopicId()
+                ))
+                .collect(Collectors.toList());
+
+        // Создаем и возвращаем DTO топика с сообщениями
+        return new TopicCompositeDto(
+                topic.getId(),
+                topic.getTitle(),
+                topic.getDescription(),
+                messageDto
+        );
     }
 }

@@ -17,7 +17,9 @@ public class CommentMapperImpl implements CommentMapper{
                 commentE.getId(),
                 commentE.getComment(),
                 commentE.getAuthor(),
-                commentE.getDate().toString());
+                commentE.getDate().toString(),
+                commentE.getMessageId()
+        );
     }
 
     @Override
@@ -42,7 +44,8 @@ public class CommentMapperImpl implements CommentMapper{
                 null,
                 commentDto.getComment(),
                 commentDto.getAuthor(),
-                localDateTime
+                localDateTime,
+                commentDto.getMessageId()
                 );
     }
 }

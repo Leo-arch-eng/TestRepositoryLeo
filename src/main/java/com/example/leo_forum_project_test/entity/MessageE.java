@@ -40,17 +40,22 @@ public class MessageE {
     @JsonProperty("localDate")
     private LocalDateTime localDateTime;
 
+    private Long topicId;
+
+
     public MessageE(Long messageId,
                     String authorName,
                     String authorSurname,
                     String message,
-                    LocalDateTime localDateTime
+                    LocalDateTime localDateTime,
+                    Long topicId
     ) {
         this.messageId = messageId;
         this.authorName = authorName;
         this.authorSurname = authorSurname;
         this.message = message;
         this.localDateTime = localDateTime;
+        this.topicId = topicId;
     }
 
     public MessageE() {
@@ -96,5 +101,12 @@ public class MessageE {
         this.localDateTime = localDateTime;
     }
 
+    public Long getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
+    }
 }
 

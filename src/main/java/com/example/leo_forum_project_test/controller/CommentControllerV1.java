@@ -35,11 +35,9 @@ public class CommentControllerV1 {
     }
 
     @PostMapping
-    public CommentDto createComment(
-            @Valid
-            @RequestBody CommentDto commentDto
-    ) {
-        return commentServiceV1.createComment(commentDto);
+    public CommentDto createComment(@Valid @RequestBody CommentDto commentDto) {
+        CommentDto createdComment = commentServiceV1.createComment(commentDto);
+        return ResponseEntity.ok(createdComment).getBody();
     }
 
     @PutMapping("/{comment_id}")

@@ -1,7 +1,9 @@
 package com.example.leo_forum_project_test.dto;
 
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +31,10 @@ public class MessageDto {
     private String message;
 
     private String date;
+
+    @NotNull(message = "ID топика не может быть null")
+    @Min(value = 0, message = "ID топика должно быть больше или равно 0")
+    private Long topicId;
 
 }
 

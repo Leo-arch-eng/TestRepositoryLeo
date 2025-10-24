@@ -2,8 +2,10 @@ package com.example.leo_forum_project_test.service;
 
 import com.example.leo_forum_project_test.dto.CommentDto;
 import com.example.leo_forum_project_test.entity.CommentE;
+import com.example.leo_forum_project_test.entity.MessageE;
 import com.example.leo_forum_project_test.mapper.CommentMapper;
 import com.example.leo_forum_project_test.repository.CommentRepositoryV2;
+import com.example.leo_forum_project_test.repository.MessageRepositoryV2;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
@@ -27,19 +29,29 @@ import java.util.stream.Collectors;
 @Service
 public class CommentServiceV1Impl implements CommentServiceV1 {
 
+    private final MessageRepositoryV2 messageRepositoryV2;
     private final CommentRepositoryV2 commentRepositoryV2;
     private final CommentMapper commentMapper;
 
     @Override
     public CommentDto createComment(@Valid CommentDto commentDto) {
+        Long messageId = commentDto.getMessageId();
+        Optional<MessageE> messageOptional= messageRepositoryV2.findById(messageId);
+        if(messageOptional.isEmpty()){
+            throw new RuntimeException("Сообщение с таким ID: " + messageId + "не найдено");
+        }
+        MessageE message = messageOptional.get();
         log.info("Создание нового комментария DTO: {}", commentDto);
-        // Преобразуем DTO в сущность
+
         CommentE commentEEntity = commentMapper.toEntity(commentDto);
-        CommentE savedCommentE = commentRepositoryV2.save(commentEEntity);
-        // Возвращаем DTO
-        CommentDto savedDto = commentMapper.toDto(savedCommentE);
-        log.info("Новый комментарий успешно создан DTO: {}", savedDto);
-        return savedDto;
+        //установили связь с топиком
+        commentEEntity.setMessageId(messageId);
+        // Преобразуем DTO в сущность
+
+        CommentE createdCommentE = commentRepositoryV2.save(commentEEntity);
+        CommentDto createdCommentDto = commentMapper.toDto(createdCommentE);
+        log.info("Новый комментарий успешно создан DTO: {}", createdCommentDto);
+        return createdCommentDto;
     }
 
     @Override

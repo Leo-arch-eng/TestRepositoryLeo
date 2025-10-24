@@ -16,7 +16,7 @@ public class CommentE {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="comment_id")
+    @Column(name = "comment_id")
     private Long id;
 
     @NotBlank(message = "Комментарий не может быть пустым")
@@ -34,9 +34,13 @@ public class CommentE {
     @JsonProperty("localDate")
     private LocalDateTime localDateTime;
 
+    @Column(name = "message_id")
+    private Long messageId;
+
 
     public CommentE() {
     }
+
 
     public String getComment() {
         return comment;
@@ -68,6 +72,22 @@ public class CommentE {
 
     public void setId(Long commentId) {
         this.id = commentId;
+    }
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
     }
 }
 

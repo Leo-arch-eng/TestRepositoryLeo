@@ -1,12 +1,14 @@
 package com.example.leo_forum_project_test.controller;
 
 import com.example.leo_forum_project_test.dto.TopicDto;
+import com.example.leo_forum_project_test.dto.TopicCompositeDto;
 import com.example.leo_forum_project_test.service.TopicServiceV1;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +44,7 @@ public class TopicControllerV1 {
         } catch (ValidationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Некорректные данные при создании Топика");
+            return ResponseEntity.status(500).body("Некорректные данные при создании топика");
         }
     }
 
@@ -70,6 +72,7 @@ public class TopicControllerV1 {
             return ResponseEntity.status(500).body("Ошибка при удалении топика");
         }
     }
+
     @GetMapping("/allTopic")
     public ResponseEntity<List<TopicDto>> getAllTopicsPaginated(
             @RequestParam(defaultValue = "0") @Min(0) int page,
@@ -81,6 +84,18 @@ public class TopicControllerV1 {
             return ResponseEntity.ok(topics);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/{id}/with-message")
+    public ResponseEntity<?> getTopicWithMessages(@PathVariable Long id) {
+        try {
+            TopicCompositeDto result = topicServiceV1.getTopicWithMessages(id);
+            return ResponseEntity.ok(result);
+        } catch (ValidationException ve) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ve.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Внутренняя ошибка сервера");
         }
     }
 }

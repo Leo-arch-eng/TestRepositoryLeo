@@ -1,10 +1,11 @@
 package com.example.leo_forum_project_test.controller;
 
-import com.example.leo_forum_project_test.dto.CommentDto;
+import com.example.leo_forum_project_test.dto.MessageCompositeDto;
 import com.example.leo_forum_project_test.dto.MessageDto;
+import com.example.leo_forum_project_test.dto.TopicCompositeDto;
 import com.example.leo_forum_project_test.service.MessageServiceV1;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.ValidationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +48,7 @@ public class MessageControllerV1 {
         messageServiceV1.deleteMessage(id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/allMessage")
     public ResponseEntity<List<MessageDto>> getMessages(
             @RequestParam(defaultValue = "0") int page,
@@ -59,5 +61,18 @@ public class MessageControllerV1 {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
+    }
+
+    @GetMapping("/{id}/with-comment")
+    public ResponseEntity<?> getMessageWithComment(@PathVariable Long id) {
+        try {
+            MessageCompositeDto result = messageServiceV1.getMessageWithComment(id);
+            return ResponseEntity.ok(result);
+        } catch (ValidationException ve) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ve.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Внутренняя ошибка сервера");
+        }
+
     }
 }
