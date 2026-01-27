@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1"
+      author: "Leo-arch-eng"
+      changes:
+        - createIndex:
+            indexName: "idx_message_author_name"
+            tableName: "message"
+            columns:
+              - column:
+                  name: "author_name"
+        - createIndex:
+            indexName: "idx_comment_message_id"
+            tableName: "comment"
+            columns:
+              - column:
+                  name: "message_id"
